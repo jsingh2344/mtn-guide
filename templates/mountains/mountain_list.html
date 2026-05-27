@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Mountains - Wyoming Mountain Guide{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow">Wyoming MVP</p>
+    <h1>Mountain guide</h1>
+  </div>
+  <form class="search-box" method="get">
+    <input name="q" value="{{ request.GET.q }}" placeholder="Search mountains">
+    <button type="submit">Search</button>
+  </form>
+</section>
+
+<section class="table-shell">
+  <table class="peak-table">
+    <thead>
+      <tr>
+        <th>Mountain</th>
+        <th>Range</th>
+        <th>Elevation</th>
+        <th>Prominence</th>
+        <th>Routes</th>
+        <th>Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for peak in peaks %}
+        <tr>
+          <td><a href="{{ peak.get_absolute_url }}">{{ peak.name }}</a></td>
+          <td>{{ peak.range_name|default:"-" }}</td>
+          <td>{% if peak.elevation_ft %}{{ peak.elevation_ft }} ft{% else %}-{% endif %}</td>
+          <td>{% if peak.prominence_ft %}{{ peak.prominence_ft }} ft{% else %}-{% endif %}</td>
+          <td>{{ peak.route_count }}</td>
+          <td>{{ peak.location|default:"-" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6">No mountains found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

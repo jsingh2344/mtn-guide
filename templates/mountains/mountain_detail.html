@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load guide_markup %}
+
+{% block title %}{{ peak.name }} - Wyoming Mountain Guide{% endblock %}
+
+{% block content %}
+<section class="mountain-hero{% if hero_photo %} mountain-hero-photo{% endif %}"{% if hero_photo %} style="background-image: linear-gradient(90deg, rgba(18, 22, 18, 0.82), rgba(18, 22, 18, 0.48)), url('{{ hero_photo.image_url }}');"{% endif %}>
+  <div>
+    <p class="eyebrow">{{ peak.range_name|default:"Wyoming" }}</p>
+    <h1>{{ peak.name }}</h1>
+    <p class="summary">{{ peak.summary }}</p>
+  </div>
+  <div class="stat-grid">
+    <div><span>Elevation</span><strong>{{ peak.elevation_ft|default:"-" }}{% if peak.elevation_ft %} ft{% endif %}</strong></div>
+    <div><span>Prominence</span><strong>{{ peak.prominence_ft|default:"-" }}{% if peak.prominence_ft %} ft{% endif %}</strong></div>
+    <div><span>Location</span><strong>{{ peak.location|default:"-" }}</strong></div>
+    <div><span>Coordinates</span><strong>{% if peak.latitude %}{{ peak.latitude }}, {{ peak.longitude }}{% else %}-{% endif %}</strong></div>
+  </div>
+</section>
+
+<section class="content-grid">
+  <aside class="side-panel">
+    <div class="map-box">
+      {% if peak.latitude and peak.longitude %}
+        <img alt="Static map for {{ peak.name }}" src="https://staticmap.openstreetmap.de/staticmap.php?center={{ peak.latitude }},{{ peak.longitude }}&zoom=10&size=420x260&markers={{ peak.latitude }},{{ peak.longitude }},red-pushpin">
+      {% else %}
+        <span>Map pending coordinates</span>
+      {% endif %}
+    </div>
+
+    <h2>Routes</h2>
+    <ul class="link-list">
+      {% for route in peak.routes.all %}
+        <li>
+          <a href="{{ route.get_absolute_url }}">{{ route.name }}</a>
+          <small>{{ route.yds_class|default:"Class TBD" }}{% if route.snow_grade %} / {{ route.snow_grade }}{% endif %}</small>
+        </li>
+      {% empty %}
+        <li>No routes imported yet.</li>
+      {% endfor %}
+    </ul>
+
+    <h2>Sources</h2>
+    <ul class="link-list">
+      {% for source in peak.sources.all %}
+        <li><a href="{{ source.url }}" rel="noreferrer">{{ source.title }}</a><small>{{ source.get_source_type_display }}</small></li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <section class="main-panel">
+    {% if photos %}
+      <article class="guide-section">
+        <h2>Photos</h2>
+        <div class="photo-grid">
+          {% for photo in photos|slice:":12" %}
+            <figure>
+              <img src="{{ photo.image_url }}" alt="{{ photo.alt_text|default:photo.caption }}">
+              {% if photo.caption or photo.credit %}
+                <figcaption>
+                  {{ photo.caption }}
+                  {% if photo.credit %}<span>{{ photo.credit }}</span>{% endif %}
+                </figcaption>
+              {% endif %}
+            </figure>
+          {% endfor %}
+        </div>
+      </article>
+    {% endif %}
+
+    {% if peak.owner_notes %}
+      <article class="guide-section public-note">
+        <h2>Owner Notes</h2>
+        <div class="prose">{{ peak.owner_notes|guide_markup }}</div>
+      </article>
+    {% endif %}
+
+    {% for section in sections %}
+      <article class="guide-section">
+        <div class="section-label">{{ section.get_section_type_display }}</div>
+        <h2>{{ section.title }}</h2>
+        <div class="prose">{{ section.body|guide_markup }}</div>
+        {% if section.photos.all %}
+          <div class="photo-grid">
+            {% for photo in section.photos.all %}
+              <figure>
+                <img src="{{ photo.image_url }}" alt="{{ photo.alt_text|default:photo.caption }}">
+                {% if photo.caption or photo.credit %}
+                  <figcaption>
+                    {{ photo.caption }}
+                    {% if photo.credit %}<span>{{ photo.credit }}</span>{% endif %}
+                  </figcaption>
+                {% endif %}
+              </figure>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if section.source %}
+          <p class="attribution">Imported from <a href="{{ section.source.url }}">{{ section.source.title }}</a>.</p>
+        {% endif %}
+      </article>
+    {% empty %}
+      <article class="guide-section">
+        <h2>Imported Content</h2>
+        <p>No imported guidebook sections are visible yet.</p>
+      </article>
+    {% endfor %}
+    <article class="guide-section">
+      <h2>Trip Reports</h2>
+      {% for report in trip_reports %}
+        <div class="report-row">
+          <h3>{{ report.title }}</h3>
+          <p>{{ report.body|truncatewords:60 }}</p>
+          {% if report.route %}<small>Route: {{ report.route.name }}</small>{% endif %}
+        </div>
+      {% empty %}
+        <p>No trip reports visible yet.</p>
+      {% endfor %}
+    </article>
+  </section>
+</section>
+{% endblock %}

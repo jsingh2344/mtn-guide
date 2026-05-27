@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Wyoming Mountain Guide{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{% url 'mountain-list' %}">Wyoming Mountain Guide</a>
+    <nav class="nav">
+      <a href="{% url 'mountain-list' %}">Mountains</a>
+      <a href="/admin/">Admin</a>
+      {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Log out</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Log in</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load guide_markup %}
+
+{% block title %}{{ route.name }} - {{ route.peak.name }}{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+  <div>
+    <p class="eyebrow"><a href="{{ route.peak.get_absolute_url }}">{{ route.peak.name }}</a></p>
+    <h1>{{ route.name }}</h1>
+  </div>
+  <div class="route-badges">
+    <span>{{ route.yds_class|default:"YDS TBD" }}</span>
+    <span>{{ route.snow_grade|default:"Snow grade TBD" }}</span>
+    <span>{% if average_rating %}{{ average_rating|floatformat:1 }}/5{% else %}No ratings{% endif %}</span>
+  </div>
+</section>
+
+<section class="content-grid">
+  <aside class="side-panel">
+    <h2>Attempts</h2>
+    <ul class="link-list">
+      {% for attempt in attempts %}
+        <li>{{ attempt.user }} <small>{{ attempt.get_outcome_display }}{% if attempt.attempt_date %} on {{ attempt.attempt_date }}{% endif %}</small></li>
+      {% empty %}
+        <li>No route attempts yet.</li>
+      {% endfor %}
+    </ul>
+  </aside>
+  <section class="main-panel">
+    <article class="guide-section">
+      <h2>Route Description</h2>
+      <div class="prose">{{ route.description|default:"No route description imported yet."|guide_markup }}</div>
+      {% if route.source %}
+        <p class="attribution">Imported from <a href="{{ route.source.url }}">{{ route.source.title }}</a>.</p>
+      {% endif %}
+    </article>
+
+    <article class="guide-section">
+      <h2>Route Trip Reports</h2>
+      {% for report in trip_reports %}
+        <div class="report-row">
+          <h3>{{ report.title }}</h3>
+          <p>{{ report.body|truncatewords:70 }}</p>
+        </div>
+      {% empty %}
+        <p>No trip reports visible yet.</p>
+      {% endfor %}
+    </article>
+  </section>
+</section>
+{% endblock %}
