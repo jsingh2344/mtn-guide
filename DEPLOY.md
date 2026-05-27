@@ -8,7 +8,7 @@ guide.jadensingh.com
 
 ## What Is Already Configured
 
-- `render.yaml` blueprint for a Render web service and PostgreSQL database
+- `render.yaml` blueprint for a free Render web service
 - `build.sh` for installing dependencies and collecting static files
 - `gunicorn` start command
 - `whitenoise` static file serving
@@ -19,15 +19,17 @@ guide.jadensingh.com
 ## Deploy Steps
 
 1. Push this project to a GitHub repository.
-2. In Render, choose **New +** -> **Blueprint**.
-3. Connect the GitHub repository.
-4. Render should detect `render.yaml`.
-5. Review the proposed web service and PostgreSQL database.
-6. Create the blueprint.
-7. Wait for the first deploy to finish.
-8. Open the generated `*.onrender.com` URL.
+2. Create a free PostgreSQL database with an external provider such as Neon.
+3. Copy the external database connection string. It should look like `postgresql://...`.
+4. In Render, choose **New +** -> **Blueprint**.
+5. Connect the GitHub repository.
+6. Render should detect `render.yaml`.
+7. Render will ask for the unsynced `DATABASE_URL` environment variable. Paste the external Postgres connection string.
+8. Create the blueprint.
+9. Wait for the first deploy to finish.
+10. Open the generated `*.onrender.com` URL.
 
-The blueprint uses a `starter` web service and a `basic-256mb` PostgreSQL database. You can lower or raise those in Render before creating the service if you want.
+The blueprint uses Render's `free` web service plan and does not create a paid Render database.
 
 ## Create A Production Admin
 
@@ -49,6 +51,8 @@ python manage.py scrape_summitpost_peru
 ```
 
 These commands fetch live SummitPost pages, so they can take several minutes.
+
+On Render's free plan, the web service may sleep when idle. Long imports may be more reliable as one-off jobs if Render offers that option for your account. If an import stops midway, rerun the command; it is designed to update existing records.
 
 ## Custom Domain
 
@@ -77,6 +81,19 @@ CSRF_TRUSTED_ORIGINS=https://mountain-guide.onrender.com,https://guide.jadensing
 ```
 
 If Render creates a different default hostname, update those environment variables in Render.
+
+## External Postgres
+
+For a no-charge setup, use Neon or another external free Postgres provider.
+
+In Neon:
+
+1. Create a project.
+2. Create or use the default database.
+3. Copy the pooled or direct connection string.
+4. Paste it into Render as `DATABASE_URL`.
+
+Do not use SQLite on Render. Render instances have ephemeral filesystems, so SQLite data can disappear between deploys/restarts.
 
 ## Local Production Check
 

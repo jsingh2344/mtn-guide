@@ -1,12 +1,8 @@
-databases:
-  - name: mountain-guide-db
-    plan: basic-256mb
-
 services:
   - type: web
     name: mountain-guide
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: bash build.sh
     preDeployCommand: python manage.py migrate --no-input
     startCommand: gunicorn summitguide.wsgi:application
@@ -22,6 +18,4 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         value: https://mountain-guide.onrender.com,https://guide.jadensingh.com
       - key: DATABASE_URL
-        fromDatabase:
-          name: mountain-guide-db
-          property: connectionString
+        sync: false
