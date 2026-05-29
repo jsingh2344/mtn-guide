@@ -11,6 +11,7 @@ guide.jadensingh.com
 - `render.yaml` blueprint for a free Render web service
 - `build.sh` for installing dependencies and collecting static files
 - `gunicorn` start command
+- Database migrations run in the Render start command because free tier services do not support `preDeployCommand`
 - `whitenoise` static file serving
 - `dj-database-url` production database configuration
 - Environment-driven `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, and `DATABASE_URL`
@@ -30,6 +31,14 @@ guide.jadensingh.com
 10. Open the generated `*.onrender.com` URL.
 
 The blueprint uses Render's `free` web service plan and does not create a paid Render database.
+
+On Render's free tier, migrations run each time the service starts:
+
+```bash
+python manage.py migrate --no-input && gunicorn summitguide.wsgi:application
+```
+
+That is acceptable for this prototype. If you later move to a paid Render service, move migrations back to `preDeployCommand`.
 
 ## Create A Production Admin
 
