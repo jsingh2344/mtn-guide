@@ -52,7 +52,7 @@ python manage.py createsuperuser
 
 ## Import Data In Production
 
-Run these commands from Render Shell or one-off jobs:
+If your Render plan includes Shell or one-off jobs, run:
 
 ```bash
 python manage.py scrape_summitpost_wyoming
@@ -61,7 +61,28 @@ python manage.py scrape_summitpost_peru
 
 These commands fetch live SummitPost pages, so they can take several minutes.
 
-On Render's free plan, the web service may sleep when idle. Long imports may be more reliable as one-off jobs if Render offers that option for your account. If an import stops midway, rerun the command; it is designed to update existing records.
+On Render's free plan, Shell may not be available. In that case:
+
+1. Open the Render web service.
+2. Go to **Environment**.
+3. Add:
+
+```text
+IMPORT_DATA_DURING_BUILD=true
+```
+
+4. Save.
+5. Run **Manual Deploy -> Clear build cache & deploy**.
+6. Watch the build logs until the Wyoming and Peru import commands finish.
+7. After the import succeeds, change the env var to:
+
+```text
+IMPORT_DATA_DURING_BUILD=false
+```
+
+8. Save and redeploy normally.
+
+The import commands are designed to update existing records, so rerunning them is okay. Still, leave `IMPORT_DATA_DURING_BUILD=false` after the initial import so ordinary deploys are faster.
 
 ## Custom Domain
 
