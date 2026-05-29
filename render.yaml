@@ -13,8 +13,8 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
-        value: mountain-guide.onrender.com,guide.jadensingh.com
+        value: .onrender.com,guide.jadensingh.com
       - key: CSRF_TRUSTED_ORIGINS
-        value: https://mountain-guide.onrender.com,https://guide.jadensingh.com
+        value: https://*.onrender.com,https://guide.jadensingh.com
       - key: DATABASE_URL
         sync: false

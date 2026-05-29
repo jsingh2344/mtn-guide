@@ -85,11 +85,11 @@ Keep the existing GitHub Pages DNS records for `jadensingh.com` unchanged.
 The `render.yaml` currently includes:
 
 ```text
-ALLOWED_HOSTS=mountain-guide.onrender.com,guide.jadensingh.com
-CSRF_TRUSTED_ORIGINS=https://mountain-guide.onrender.com,https://guide.jadensingh.com
+ALLOWED_HOSTS=.onrender.com,guide.jadensingh.com
+CSRF_TRUSTED_ORIGINS=https://*.onrender.com,https://guide.jadensingh.com
 ```
 
-If Render creates a different default hostname, update those environment variables in Render.
+The leading dot in `.onrender.com` allows Render's generated service hostnames, such as `mountain-guide-td4z.onrender.com`.
 
 ## External Postgres
 
