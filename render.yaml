@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: bash build.sh
-    startCommand: python manage.py migrate --no-input && gunicorn summitguide.wsgi:application
+    startCommand: python manage.py migrate --no-input && python manage.py bootstrap_production && gunicorn summitguide.wsgi:application
     envVars:
       - key: PYTHON_VERSION
         value: 3.13.5
