@@ -71,18 +71,34 @@ On Render's free plan, Shell may not be available. In that case:
 IMPORT_DATA_DURING_BUILD=true
 ```
 
+You can also create an admin user without Shell by setting these environment variables before deploying:
+
+```text
+DJANGO_SUPERUSER_USERNAME=your_username
+DJANGO_SUPERUSER_EMAIL=your_email@example.com
+DJANGO_SUPERUSER_PASSWORD=a-long-unique-password
+```
+
 4. Save.
 5. Run **Manual Deploy -> Clear build cache & deploy**.
 6. Watch the build logs until the Wyoming and Peru import commands finish.
-7. After the import succeeds, change the env var to:
+7. Confirm the build logs include a summary like:
+
+```text
+SUMMARY: peaks=411 summitpost_sources=411 sections=3484 photos=3645
+```
+
+8. After the import succeeds, change the env var to:
 
 ```text
 IMPORT_DATA_DURING_BUILD=false
 ```
 
-8. Save and redeploy normally.
+9. Save and redeploy normally.
 
 The import commands are designed to update existing records, so rerunning them is okay. Still, leave `IMPORT_DATA_DURING_BUILD=false` after the initial import so ordinary deploys are faster.
+
+Imported SummitPost sections are visible only to logged-in users. Logged-out users see public metadata and source links, not the imported guidebook body.
 
 ## Custom Domain
 

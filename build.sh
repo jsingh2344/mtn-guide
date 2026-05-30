@@ -6,6 +6,7 @@ python manage.py collectstatic --no-input
 
 if [[ "${IMPORT_DATA_DURING_BUILD:-false}" == "true" ]]; then
   python manage.py migrate --no-input
-  python manage.py scrape_summitpost_wyoming
-  python manage.py scrape_summitpost_peru
+  python manage.py bootstrap_production --import-data
+else
+  python manage.py bootstrap_production
 fi
